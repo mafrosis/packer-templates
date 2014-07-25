@@ -3,7 +3,7 @@
     "salt_version": "",
     "cleanup_pause": "",
     "headless": "true",
-    "iso_url": "file:///Users/mattblack/Development/box-cutter/iso/debian-7.6.0-amd64-netinst.iso",
+    "iso_url": "iso/debian-7.6.0-amd64-netinst.iso",
     "iso_checksum": "12301855952ce5fdc3319ed0c172f352c5223f49",
     "iso_checksum_type": "sha1"
   },
@@ -11,7 +11,7 @@
     "vm_name": "debian76",
     "type": "vmware-iso",
     "guest_os_type": "debian7-64",
-    "http_directory": "http",
+    "http_directory": "debian",
     "iso_url": "{{user `iso_url`}}",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
@@ -47,7 +47,7 @@
     ],
     "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
     "scripts": [
-      "script/base.sh",
+      "script/debian.base.sh",
       "script/vagrant.sh",
       "script/vmtool.sh",
       "script/saltstack.sh",
