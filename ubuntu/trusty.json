@@ -1,0 +1,75 @@
+{
+  "variables": {
+    "salt_version": "",
+    "cleanup_pause": "",
+    "headless": "true",
+    "auto_upgrade": "",
+    "iso_url": "iso/ubuntu-14.04-server-amd64.iso",
+    "iso_checksum": "4d94f6111b8fe47da94396180ce499d8c0bb44f3"
+    "iso_checksum_type": "sha1"
+  },
+  "builders": [{
+    "vm_name": "ubuntu1404",
+    "type": "vmware-iso",
+    "guest_os_type": "ubuntu-64",
+    "http_directory": "ubuntu",
+    "iso_url": "{{ user `iso_url` }}",
+    "iso_checksum": "{{ user `iso_checksum` }}",
+    "iso_checksum_type": "{{user `iso_checksum_type`}}",
+    "ssh_username": "vagrant",
+    "ssh_password": "vagrant",
+    "ssh_wait_timeout": "10000s",
+    "headless": "{{ user `headless` }}",
+    "tools_upload_flavor": "linux",
+    "boot_command": [
+      "<esc><esc><enter><wait>",
+      "/install/vmlinuz auto",
+      " console-setup/ask_detect=false",
+      " console-setup/layoutcode=gb",
+      " console-setup/modelcode=pc105",
+      " debconf/frontend=noninteractive",
+      " debian-installer=en_AU",
+      " fb=false",
+      " initrd=/install/initrd.gz",
+      " kbd-chooser/method=gb",
+      " keyboard-configuration/layout=GB",
+      " keyboard-configuration/variant=GB",
+      " locale=en_AU",
+      " netcfg/get_domain=vm",
+      " netcfg/get_hostname=vagrant",
+      " noapic" ,
+      " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
+      " -- ",
+      "<enter>"
+    ],
+    "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
+    "disk_size": 10140,
+    "vmx_data": {
+      "memsize": "512",
+      "numvcpus": "1"
+    }
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "environment_vars": [
+      "SALT_VERSION={{user `cm_version`}}",
+      "CLEANUP_PAUSE={{user `cleanup_pause`}}",
+      "AUTO_UPGRADE={{user `auto_upgrade`}}"
+    ],
+    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+    "scripts": [
+      "script/ubuntu.kernel.sh",
+      "script/vagrant.sh",
+      "script/ubuntu.sshd.sh",
+      "script/vmtool.sh",
+      "script/saltstack.sh",
+      "script/minimize.sh",
+      "script/cleanup.sh"
+    ]
+  }],
+  "post-processors": [{
+    "type": "vagrant",
+    "keep_input_artifact": false,
+    "output": "box/{{.Provider}}/ubuntu1404-salt{{user `cm_version`}}.box"
+  }]
+}
