@@ -1,3 +1,6 @@
 [submodule "osx"]
 	path = osx
 	url = git@github.com:mafrosis/osx-vm-templates.git
+[submodule "windows"]
+	path = windows
+	url = git@github.com:mafrosis/packer-windows.git
