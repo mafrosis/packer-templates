@@ -1,0 +1,3 @@
+[submodule "osx"]
+	path = osx
+	url = git@github.com:mafrosis/osx-vm-templates.git
