@@ -2,6 +2,10 @@
 
 SALT_VERSION=${SALT_VERSION:-latest}
 
+if [[ -z $(which curl) ]]; then
+	sudo apt-get install -y curl
+fi
+
 if [[ ${SALT_VERSION:-} == 'latest' ]]; then
 	echo "==> Installing latest Salt version"
 	curl -L http://bootstrap.saltstack.org | sudo sh
