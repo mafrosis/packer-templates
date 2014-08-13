@@ -4,17 +4,18 @@
 		"cleanup_pause": "",
 		"headless": "true",
 		"auto_upgrade": "",
-		"iso_url": "iso/ubuntu-14.04-server-amd64.iso",
-		"iso_checksum": "4d94f6111b8fe47da94396180ce499d8c0bb44f3",
-		"iso_checksum_type": "sha1"
+		"iso_local": "iso/ubuntu-14.04-server-amd64.iso"
 	},
 	"builders": [{
 		"type": "vmware-iso",
 		"guest_os_type": "ubuntu-64",
 		"http_directory": "ubuntu",
-		"iso_url": "{{ user `iso_url` }}",
-		"iso_checksum": "{{ user `iso_checksum` }}",
-		"iso_checksum_type": "{{user `iso_checksum_type`}}",
+		"iso_urls": [
+			"{{user `iso_local`}}",
+			"http://mirror.internode.on.net/pub/ubuntu/releases/14.04/ubuntu-14.04-server-amd64.iso"
+		],
+		"iso_checksum": "4d94f6111b8fe47da94396180ce499d8c0bb44f3",
+		"iso_checksum_type": "sha1",
 		"ssh_username": "vagrant",
 		"ssh_password": "vagrant",
 		"ssh_wait_timeout": "10000s",
