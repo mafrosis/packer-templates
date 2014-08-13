@@ -9,7 +9,6 @@
 		"iso_checksum_type": "sha1"
 	},
 	"builders": [{
-		"vm_name": "ubuntu1404",
 		"type": "vmware-iso",
 		"guest_os_type": "ubuntu-64",
 		"http_directory": "ubuntu",

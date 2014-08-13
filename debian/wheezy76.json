@@ -8,7 +8,6 @@
 		"iso_checksum_type": "sha1"
 	},
 	"builders": [{
-		"vm_name": "debian76",
 		"type": "vmware-iso",
 		"guest_os_type": "debian7-64",
 		"http_directory": "debian",
