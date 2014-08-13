@@ -3,17 +3,18 @@
 		"salt_version": "",
 		"cleanup_pause": "",
 		"headless": "true",
-		"iso_url": "iso/debian-7.6.0-amd64-netinst.iso",
-		"iso_checksum": "12301855952ce5fdc3319ed0c172f352c5223f49",
-		"iso_checksum_type": "sha1"
+		"iso_local": "iso/debian-7.6.0-amd64-netinst.iso"
 	},
 	"builders": [{
 		"type": "vmware-iso",
 		"guest_os_type": "debian7-64",
 		"http_directory": "debian",
-		"iso_url": "{{user `iso_url`}}",
-		"iso_checksum": "{{user `iso_checksum`}}",
-		"iso_checksum_type": "{{user `iso_checksum_type`}}",
+		"iso_urls": [
+			"{{user `iso_local`}}",
+			"http://cdimage.debian.org/debian-cd/7.6.0/amd64/iso-cd/debian-7.6.0-amd64-netinst.iso"
+		],
+		"iso_checksum": "12301855952ce5fdc3319ed0c172f352c5223f49",
+		"iso_checksum_type": "sha1",
 		"ssh_username": "vagrant",
 		"ssh_password": "vagrant",
 		"ssh_wait_timeout": "10000s",
