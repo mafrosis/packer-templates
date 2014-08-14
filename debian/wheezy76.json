@@ -41,6 +41,10 @@
 	}],
 	"provisioners": [{
 		"type": "shell",
+		"inline": "echo 'vagrant' | sudo -S apt-get -y update"
+	},
+	{
+		"type": "shell",
 		"override": {
 			"vmware-iso": {
 				"execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
