@@ -49,6 +49,14 @@
 			"memsize": "512",
 			"numvcpus": "1"
 		}
+	},
+	{
+		"type": "amazon-ebs",
+		"ami_name": "ami-{{user `app_name`}}-{{ timestamp }}",
+		"instance_type": "t2.micro",
+		"region": "ap-southeast-2",
+		"source_ami": "ami-b53e5a8f",
+		"ssh_username": "ubuntu"
 	}],
 	"provisioners": [{
 		"type": "shell",
@@ -69,6 +77,15 @@
 					"script/vmtool.sh",
 					"script/saltstack.sh",
 					"script/cleanup.sh"
+				]
+			},
+			"amazon-ebs": {
+				"execute_command": "{{.Vars}} sudo -E bash '{{.Path}}'",
+				"environment_vars": [
+					"SALT_VERSION={{user `salt_version`}}"
+				],
+				"scripts": [
+					"script/saltstack.sh"
 				]
 			}
 		}
