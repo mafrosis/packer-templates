@@ -41,22 +41,26 @@
 	}],
 	"provisioners": [{
 		"type": "shell",
-		"environment_vars": [
-			"CLEANUP_PAUSE={{user `cleanup_pause`}}",
-			"SALT_VERSION={{user `salt_version`}}"
-		],
-		"execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-		"scripts": [
-			"script/debian.base.sh",
-			"script/vagrant.sh",
-			"script/vmtool.sh",
-			"script/saltstack.sh",
-			"script/minimize.sh",
-			"script/cleanup.sh"
-		]
+		"override": {
+			"vmware-iso": {
+				"execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+				"environment_vars": [
+					"CLEANUP_PAUSE={{user `cleanup_pause`}}",
+					"SALT_VERSION={{user `salt_version`}}"
+				],
+				"scripts": [
+					"script/debian.base.sh",
+					"script/vagrant.sh",
+					"script/vmtool.sh",
+					"script/saltstack.sh",
+					"script/cleanup.sh"
+				]
+			}
+		}
 	}],
 	"post-processors": [{
 		"type": "vagrant",
+		"only": ["vmware-iso"],
 		"keep_input_artifact": false,
 		"output": "box/{{.Provider}}/debian76-salt{{user `salt_version`}}.box"
 	}]
