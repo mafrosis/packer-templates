@@ -51,24 +51,26 @@
 	}],
 	"provisioners": [{
 		"type": "shell",
-		"environment_vars": [
-			"SALT_VERSION={{user `cm_version`}}",
-			"CLEANUP_PAUSE={{user `cleanup_pause`}}",
-			"AUTO_UPGRADE={{user `auto_upgrade`}}"
-		],
-		"execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-		"scripts": [
-			"script/ubuntu.kernel.sh",
-			"script/vagrant.sh",
-			"script/ubuntu.sshd.sh",
-			"script/vmtool.sh",
-			"script/saltstack.sh",
-			"script/minimize.sh",
-			"script/cleanup.sh"
-		]
+		"override": {
+			"vmware-iso": {
+				"execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+				"environment_vars": [
+					"CLEANUP_PAUSE={{user `cleanup_pause`}}",
+					"SALT_VERSION={{user `salt_version`}}"
+				],
+				"scripts": [
+					"script/vagrant.sh",
+					"script/ubuntu.sshd.sh",
+					"script/vmtool.sh",
+					"script/saltstack.sh",
+					"script/cleanup.sh"
+				]
+			}
+		}
 	}],
 	"post-processors": [{
 		"type": "vagrant",
+		"only": ["vmware-iso"],
 		"keep_input_artifact": false,
 		"output": "box/{{.Provider}}/ubuntu1404-salt{{user `cm_version`}}.box"
 	}]
