@@ -1,10 +1,10 @@
 {
 	"variables": {
-		"app_name": "wheezy76",
+		"app_name": "wheezy77",
 		"salt_version": "",
 		"cleanup_pause": "",
 		"headless": "true",
-		"iso_local": "iso/debian-7.6.0-amd64-netinst.iso"
+		"iso_local": "iso/debian-7.7.0-amd64-netinst.iso"
 	},
 	"builders": [{
 		"type": "vmware-iso",
@@ -12,9 +12,9 @@
 		"http_directory": "debian",
 		"iso_urls": [
 			"{{user `iso_local`}}",
-			"http://cdimage.debian.org/debian-cd/7.6.0/amd64/iso-cd/debian-7.6.0-amd64-netinst.iso"
+			"http://cdimage.debian.org/debian-cd/7.7.0/amd64/iso-cd/debian-7.7.0-amd64-netinst.iso"
 		],
-		"iso_checksum": "12301855952ce5fdc3319ed0c172f352c5223f49",
+		"iso_checksum": "be34b4fa4d307698ef2ac520979879d9e25a49a4",
 		"iso_checksum_type": "sha1",
 		"ssh_username": "vagrant",
 		"ssh_password": "vagrant",
