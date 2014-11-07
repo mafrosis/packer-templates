@@ -4,6 +4,7 @@
 		"salt_version": "",
 		"cleanup_pause": "",
 		"headless": "true",
+		"dist_upgrade": "false",
 		"iso_local": "iso/debian-7.7.0-amd64-netinst.iso"
 	},
 	"builders": [{
@@ -51,10 +52,12 @@
 				"execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
 				"environment_vars": [
 					"CLEANUP_PAUSE={{user `cleanup_pause`}}",
-					"SALT_VERSION={{user `salt_version`}}"
+					"SALT_VERSION={{user `salt_version`}}",
+					"DIST_UPGRADE={{user `dist_upgrade`}}"
 				],
 				"scripts": [
 					"script/debian.base.sh",
+					"script/dist-upgrade.sh",
 					"script/vagrant.sh",
 					"script/vmtool.sh",
 					"script/saltstack.sh",

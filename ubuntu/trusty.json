@@ -4,7 +4,7 @@
 		"salt_version": "",
 		"cleanup_pause": "",
 		"headless": "true",
-		"auto_upgrade": "",
+		"dist_upgrade": "false",
 		"iso_local": "iso/ubuntu-14.04-server-amd64.iso"
 	},
 	"builders": [{
@@ -61,10 +61,12 @@
 				"execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
 				"environment_vars": [
 					"CLEANUP_PAUSE={{user `cleanup_pause`}}",
-					"SALT_VERSION={{user `salt_version`}}"
+					"SALT_VERSION={{user `salt_version`}}",
+					"DIST_UPGRADE={{user `dist_upgrade`}}"
 				],
 				"scripts": [
 					"script/vagrant.sh",
+					"script/dist-upgrade.sh",
 					"script/ubuntu.sshd.sh",
 					"script/vmtool.sh",
 					"script/saltstack.sh",
