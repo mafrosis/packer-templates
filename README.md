@@ -23,7 +23,7 @@ From the root directory, run the following commands:
 Debian
 ------
 
-    packer build -only=vmware-iso -force debian/wheezy77.json
+    packer build -only=vmware-iso -force debian/wheezy.json
 
 
 Ubuntu

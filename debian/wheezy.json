@@ -1,6 +1,6 @@
 {
 	"variables": {
-		"app_name": "wheezy77",
+		"app_name": "wheezy",
 		"salt_version": "",
 		"cleanup_pause": "",
 		"headless": "true",
