@@ -25,8 +25,6 @@ rm -rf /tmp/*
 # Remove some packages to get a minimal install
 echo "==> Removing all linux kernels except the current one"
 dpkg --list | awk '{ print $2 }' | grep 'linux-image-3.*-generic' | grep -v $(uname -r) | xargs apt-get -y purge
-echo "==> Removing linux headers"
-rm -rf /usr/src/linux-headers*
 echo "==> Removing linux source"
 dpkg --list | awk '{ print $2 }' | grep linux-source | xargs apt-get -y purge
 echo "==> Removing development packages"
@@ -49,13 +47,13 @@ apt-get -y purge popularity-contest installation-report wireless-tools wpasuppli
 echo "==> Removing man pages"
 rm -rf /usr/share/man/*
 echo "==> Removing APT files"
-find /var/lib/apt -type f | xargs rm -f
-echo "==> Removing anything in /usr/src"
-rm -rf /usr/src/*
+find /var/lib/apt -type f -exec rm -f {} +
+echo "==> Removing anything in /usr/src, except linux headers"
+find /usr/src -mindepth 1 -maxdepth 1 -not -name 'linux-headers-*' -exec rm -rf {} +
 echo "==> Removing any docs"
 rm -rf /usr/share/doc/*
 echo "==> Removing caches"
-find /var/cache -type f -exec rm -rf {} \;
+find /var/cache -type f -exec rm -f {} +
 
 # Cleanup apt cache
 apt-get -y autoremove --purge
