@@ -1,0 +1,71 @@
+{
+	"variables": {
+		"app_name": "jessie",
+		"salt_version": "",
+		"cleanup_pause": "",
+		"headless": "true",
+		"dist_upgrade": "false",
+		"iso_local": "iso/debian-testing-amd64-netinst.iso"
+	},
+	"builders": [{
+		"type": "vmware-iso",
+		"guest_os_type": "debian7-64",
+		"http_directory": "debian",
+		"iso_urls": [
+			"{{user `iso_local`}}",
+			"http://cdimage.debian.org/debian-cd/8.0.0/amd64/iso-cd/debian-8.0.0-amd64-netinst.iso"
+		],
+		"iso_checksum": "eab72f4ba73adea580aeaec91649e846aac89fa9",
+		"iso_checksum_type": "sha1",
+		"ssh_username": "vagrant",
+		"ssh_password": "vagrant",
+		"ssh_wait_timeout": "10000s",
+		"headless": "{{user `headless`}}",
+		"tools_upload_flavor": "linux",
+		"boot_command": [
+			"<esc><wait>",
+			"install",
+			" auto",
+			" url=http://{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg",
+			" debian-installer=en_AU",
+			" locale=en_AU",
+			" keymap=gb",
+			" netcfg/get_hostname=vagrant",
+			" netcfg/get_domain=vm ",
+			"<enter>"
+		],
+		"shutdown_command": "echo 'vagrant'|sudo -S shutdown -h now",
+		"disk_size": 10140,
+		"vmx_data": {
+			"memsize": "512",
+			"numvcpus": "1"
+		}
+	}],
+	"provisioners": [{
+		"type": "shell",
+		"inline": "echo 'vagrant' | sudo -S apt-get -y update"
+	},
+	{
+		"type": "shell",
+		"execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+		"environment_vars": [
+			"CLEANUP_PAUSE={{user `cleanup_pause`}}",
+			"SALT_VERSION={{user `salt_version`}}",
+			"DIST_UPGRADE={{user `dist_upgrade`}}"
+		],
+		"scripts": [
+			"script/debian.base.sh",
+			"script/dist-upgrade.sh",
+			"script/vagrant.sh",
+			"script/vmtool.sh",
+			"script/saltstack.sh",
+			"script/cleanup.sh"
+		]
+	}],
+	"post-processors": [{
+		"type": "vagrant",
+		"only": ["vmware-iso"],
+		"keep_input_artifact": false,
+		"output": "box/{{user `app_name`}}-packer.box"
+	}]
+}
