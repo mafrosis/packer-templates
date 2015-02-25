@@ -2,7 +2,7 @@
 
 USAGE="build-salted-vagrant.sh [-h] [-t] [-d] -v <version> <flavour>
 
-  flavour           either 'debian' or 'ubuntu'
+  flavour           release codename {'wheezy','trusty','debian','ubuntu'} ('debian' will default to latest release)
   -v version        salt version tag to install
   -t (optional)     test mode (don't dist_upgrade; leave box available for test)
   -d (optional)     debug mode; print all vagrant output
@@ -141,10 +141,21 @@ function build {
 	return 0
 }
 
+# main build dispatch
 if [[ $1 == 'ubuntu' ]]; then
 	build ubuntu trusty $VERSION
+elif [[ $1 == 'trusty' ]]; then
+	build ubuntu trusty $VERSION
+
 elif [[ $1 == 'debian' ]]; then
 	build debian wheezy $VERSION
+elif [[ $1 == 'wheezy' ]]; then
+	build debian wheezy $VERSION
+elif [[ $1 == 'jessie' ]]; then
+	build debian jessie $VERSION
+else
+	echo "Unsupported flavour: $1"
+	exit 1
 fi
 
 exit $?
