@@ -1,28 +1,31 @@
 # /bin/bash
 
-USAGE="build-salted-vagrant.sh [-h] [-t] [-d] -v <version> <flavour>
+USAGE="build-salted-vagrant.sh [-h] [-t] [-d] [-f] -v <version> <flavour>
 
   flavour           release codename {'wheezy','trusty','debian','ubuntu'} ('debian' will default to latest release)
   -v version        salt version tag to install
   -t (optional)     test mode (don't dist_upgrade; leave box available for test)
   -d (optional)     debug mode; print all vagrant output
   -h (optional)     print this help message
+  -f (optional)     overwrite existing boxes without input
 "
 
 VERSION=''
 TEST=0
 DEBUG=0
+FORCE=0
 
 red='\033[0;91m'
 green='\033[0;92m'
 reset='\033[0m'
 
-while getopts "v:tdh" options
+while getopts "v:tdhf" options
 do
 	case $options in
 		v ) VERSION=$OPTARG;;
 		t ) TEST=1;;
 		d ) DEBUG=1;;
+		f ) FORCE=1;;
 		h ) echo "$USAGE" && exit 1;;
 	esac
 done
@@ -137,7 +140,7 @@ function build {
 	# remove the test box from vagrant
 	vagrant box remove "$2-packer"
 
-	if [[ -f "box/$2""64-au-salt-$3"".box" ]]; then
+	if [[ $FORCE -eq 0 ]] && [[ -f "box/$2""64-au-salt-$3"".box" ]]; then
 		read -p "A box exists at box/$2""64-au-salt-$3"".box. Overwrite it? [y/N] " -n1 -s 1>&3 2>&4
 		echo ''
 	else
