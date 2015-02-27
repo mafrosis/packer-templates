@@ -104,6 +104,14 @@ function build {
 		return 2
 	fi
 
+	# ensure box is comes up after reboot
+	echo "Reloading VM to be sure it works" 1>&3 2>&4
+	vagrant reload
+	if [[ $? -gt 0 ]]; then
+		echo "${red}Failed reloading the vagrant box!!${reset}" 1>&3 2>&4
+		return 2
+	fi
+
 	# verify salt version
 	INSTALLED=$(vagrant ssh -c 'salt-call --version'  | awk -v version=${3:1} '$1 ~ $version')
 	if [[ -z $INSTALLED ]]; then
