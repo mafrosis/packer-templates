@@ -57,12 +57,17 @@ fi
 
 
 function create_vagrantfile {
+	if [[ $2 -eq 1 ]]; then
+		BOOTSTRAP_OPTIONS='-D -K'
+	fi
+
 	tee Vagrantfile > /dev/null <<EOF
 Vagrant.configure("2") do |config|
   config.vm.box = "$1"
   config.vm.synced_folder "/tmp", "/tmp/host_machine"
   config.vm.provision :salt do |salt|
     salt.run_highstate = false
+    salt.bootstrap_options = "$BOOTSTRAP_OPTIONS"
   end
 end
 EOF
@@ -78,7 +83,7 @@ function build {
 	packer build -only=vmware-iso -force -var dist_upgrade=$DIST_UPGRADE -var salt_version="$3" "$1/$2".json 1>&3 2>&4
 
 	# create local Vagrantfile for testing
-	create_vagrantfile "$2-packer"
+	create_vagrantfile "$2-packer" $DEBUG
 
 	# stop and destroy an old test build
 	VSTATUS="$(vagrant status)"
