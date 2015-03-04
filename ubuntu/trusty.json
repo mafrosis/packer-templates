@@ -4,6 +4,7 @@
 		"salt_version": "",
 		"cleanup_pause": "",
 		"headless": "true",
+		"debug": "false",
 		"dist_upgrade": "false"
 	},
 	"builders": [{
@@ -69,7 +70,8 @@
 				"environment_vars": [
 					"CLEANUP_PAUSE={{user `cleanup_pause`}}",
 					"SALT_VERSION={{user `salt_version`}}",
-					"DIST_UPGRADE={{user `dist_upgrade`}}"
+					"DIST_UPGRADE={{user `dist_upgrade`}}",
+					"DEBUG={{user `debug`}}"
 				],
 				"scripts": [
 					"script/vagrant.sh",
