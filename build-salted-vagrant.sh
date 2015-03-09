@@ -104,7 +104,8 @@ function build {
 	vagrant up
 	if [[ $? -gt 0 ]]; then
 		echo "${red}Failed bringing up the vagrant box!!${reset}" 1>&3 2>&4
-		return 2
+		cleanup "$2-packer"
+		return $?
 	fi
 
 	# ensure box is comes up after reboot
@@ -112,33 +113,27 @@ function build {
 	vagrant reload
 	if [[ $? -gt 0 ]]; then
 		echo "${red}Failed reloading the vagrant box!!${reset}" 1>&3 2>&4
-		return 2
+		cleanup "$2-packer"
+		return $?
 	fi
 
 	# verify salt version
 	INSTALLED=$(vagrant ssh -c 'salt-call --version'  | awk -v version=${3:1} '$1 ~ $version')
 	if [[ -z $INSTALLED ]]; then
-		vagrant destroy -f
-		vagrant box remove "$2-packer"
 		echo "${red}Failed verifying salt version $3 installed on target box!!${reset}" 1>&3 2>&4
-		return 2
+		cleanup "$2-packer"
+		return $?
 	fi
-
-	# destroy the local test VM
-	vagrant destroy -f
 
 	echo "${green}Verified Salt $3 installed on box/$2-packer${reset}" 1>&3 2>&4
 
+	# remove the testing bits
+	cleanup "$2-packer"
+
+	# exit now if using test mode (cleanup was aborted)
 	if [[ $TEST -eq 1 ]]; then
-		echo "Test mode enabled; $2-packer box available for testing" 1>&3 2>&4
 		return 3
 	fi
-
-	# clean up the Vagrantfile
-	rm -f Vagrantfile
-
-	# remove the test box from vagrant
-	vagrant box remove "$2-packer"
 
 	if [[ $FORCE -eq 0 ]] && [[ -f "box/$2""64-au-salt-$3"".box" ]]; then
 		read -p "A box exists at box/$2""64-au-salt-$3"".box. Overwrite it? [y/N] " -n1 -s 1>&3 2>&4
@@ -156,6 +151,23 @@ function build {
 
 	return 0
 }
+
+function cleanup {
+	if [[ $TEST -eq 1 ]]; then
+		echo "Test mode enabled; $2-packer box available for testing" 1>&3 2>&4
+		return 3
+	fi
+
+	export VAGRANT_LOG=''
+
+	# destroy local VM, remove Vagrantfile & delete test box
+	vagrant destroy -f
+	rm -f Vagrantfile
+	vagrant box remove "$1"
+
+	return 2
+}
+
 
 # main build dispatch
 if [[ $1 == 'ubuntu' ]]; then
