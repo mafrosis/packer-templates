@@ -99,6 +99,11 @@ function build {
 	echo "\nAdding box to vagrant for testing" 1>&3 2>&4
 	vagrant box add -f "$2-packer" box/$2-packer.box
 
+	# show Vagrant debugging output
+	if [[ $DEBUG -eq 1 ]]; then
+		export VAGRANT_LOG=info
+	fi
+
 	# bring up testing box
 	echo "Bringing up testing VM with Vagrant" 1>&3 2>&4
 	vagrant up
