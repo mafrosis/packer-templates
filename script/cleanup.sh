@@ -4,6 +4,12 @@ CLEANUP_PAUSE=${CLEANUP_PAUSE:-0}
 echo "==> Pausing for ${CLEANUP_PAUSE} seconds..."
 sleep ${CLEANUP_PAUSE}
 
+echo "==> Disk usage before minimization"
+df -h
+
+echo "==> Installed packages before cleanup"
+dpkg --get-selections | grep -v deinstall
+
 # Make sure udev does not block our network - http://6.ptmc.org/?p=164
 echo "==> Cleaning up udev rules"
 rm -rf /dev/.udev/
@@ -87,3 +93,6 @@ rm -f /EMPTY
 # Make sure we wait until all the data is written to disk, otherwise
 # Packer might quite too early before the large files are deleted
 sync
+
+echo "==> Disk usage after cleanup"
+df -h
