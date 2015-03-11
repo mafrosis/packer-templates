@@ -84,6 +84,9 @@ function build {
 
 	# build box image with packer
 	packer build -only=vmware-iso -force -var dist_upgrade=$DIST_UPGRADE -var salt_version="$3" "$1/$2".json 1>&3 2>&4
+	if [[ $? -gt 0 ]]; then
+		return 4
+	fi
 
 	# create local Vagrantfile for testing
 	create_vagrantfile "$2-packer" $DEBUG
