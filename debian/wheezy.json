@@ -4,15 +4,14 @@
 		"salt_version": "",
 		"cleanup_pause": "",
 		"headless": "true",
-		"dist_upgrade": "false",
-		"iso_local": "iso/debian-7.8.0-amd64-netinst.iso"
+		"dist_upgrade": "false"
 	},
 	"builders": [{
 		"type": "vmware-iso",
 		"guest_os_type": "debian7-64",
 		"http_directory": "debian",
 		"iso_urls": [
-			"{{user `iso_local`}}",
+			"iso/debian-7.8.0-amd64-netinst.iso",
 			"http://cdimage.debian.org/debian-cd/7.8.0/amd64/iso-cd/debian-7.8.0-amd64-netinst.iso"
 		],
 		"iso_checksum": "e63fc19d23dd614f4e2f129237ea6517858ff8cc",

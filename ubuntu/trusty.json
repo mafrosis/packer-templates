@@ -4,15 +4,14 @@
 		"salt_version": "",
 		"cleanup_pause": "",
 		"headless": "true",
-		"dist_upgrade": "false",
-		"iso_local": "iso/ubuntu-14.04-server-amd64.iso"
+		"dist_upgrade": "false"
 	},
 	"builders": [{
 		"type": "vmware-iso",
 		"guest_os_type": "ubuntu-64",
 		"http_directory": "ubuntu",
 		"iso_urls": [
-			"{{user `iso_local`}}",
+			"iso/ubuntu-14.04-server-amd64.iso",
 			"http://mirror.internode.on.net/pub/ubuntu/releases/14.04/ubuntu-14.04-server-amd64.iso"
 		],
 		"iso_checksum": "4d94f6111b8fe47da94396180ce499d8c0bb44f3",
