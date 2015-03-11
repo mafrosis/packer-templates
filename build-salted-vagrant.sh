@@ -17,6 +17,7 @@ FORCE=0
 
 red='\033[0;91m'
 green='\033[0;92m'
+white='\033[0;97m'
 reset='\033[0m'
 
 while getopts "v:tdhf" options
@@ -94,12 +95,12 @@ function build {
 	# stop and destroy an old test build
 	VSTATUS="$(vagrant status)"
 	if [[ ! -z "$(echo $VSTATUS | grep 'default.*run')" ]] || [[ ! -z "$(echo $VSTATUS | grep 'default.*susp')" ]]; then
-		echo "Destroying existing running VM"
+		echo "${white}==> Destroying existing running VM${reset}"
 		vagrant destroy -f
 	fi
 
 	# add the box for testing
-	echo "\nAdding box to vagrant for testing" 1>&3 2>&4
+	echo "\n${white}==> Adding box to vagrant for testing${reset}" 1>&3 2>&4
 	vagrant box add -f "$2-packer" box/$2-packer.box
 
 	# show Vagrant debugging output
@@ -108,7 +109,7 @@ function build {
 	fi
 
 	# bring up testing box
-	echo "Bringing up testing VM with Vagrant" 1>&3 2>&4
+	echo "${white}==> Bringing up testing VM with Vagrant${reset}" 1>&3 2>&4
 	vagrant up
 	if [[ $? -gt 0 ]]; then
 		echo "${red}Failed bringing up the vagrant box!!${reset}" 1>&3 2>&4
@@ -117,7 +118,7 @@ function build {
 	fi
 
 	# ensure box is comes up after reboot
-	echo "Reloading VM to be sure it works" 1>&3 2>&4
+	echo "${white}==> Reloading VM to be sure it works${reset}" 1>&3 2>&4
 	vagrant reload
 	if [[ $? -gt 0 ]]; then
 		echo "${red}Failed reloading the vagrant box!!${reset}" 1>&3 2>&4
@@ -133,10 +134,10 @@ function build {
 		return $?
 	fi
 
-	echo "${green}Verified Salt $3 installed on box/$2-packer${reset}" 1>&3 2>&4
-
 	# remove the testing bits
 	cleanup "$2-packer"
+
+	echo "==> ${green}Verified Salt $3 installed on box/$2-packer${reset}" 1>&3 2>&4
 
 	# exit now if using test mode (cleanup was aborted)
 	if [[ $TEST -eq 1 ]]; then
@@ -152,9 +153,9 @@ function build {
 
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		mv -f "box/$2-packer.box" "box/$2""64-au-salt-$3"".box"
-		echo "Box moved to box/$2""64-au-salt-$3"".box\n" 1>&3 2>&4
+		echo "${white}==> Box moved to box/$2""64-au-salt-$3"".box\n${reset}" 1>&3 2>&4
 	else
-		echo "Box left at box/$2-packer.box"
+		echo "${white}==> Box left at box/$2-packer.box\n${reset}" 1>&3 2>&4
 	fi
 
 	return 0
@@ -162,7 +163,7 @@ function build {
 
 function cleanup {
 	if [[ $TEST -eq 1 ]]; then
-		echo "Test mode enabled; $2-packer box available for testing" 1>&3 2>&4
+		echo "==> Test mode enabled; box/"$1".box available for testing" 1>&3 2>&4
 		return 3
 	fi
 
