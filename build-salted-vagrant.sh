@@ -80,11 +80,19 @@ EOF
 function build {
 	echo "Building Vagrant box for $2 at version $3" 1>&3 2>&4
 
+	# pass debug flag onto packer
+	if [[ $DEBUG -eq 1 ]]; then PACKER_DEBUG=true; else PACKER_DEBUG=false; fi
+
 	# don't run full dist-upgrade in test mode
 	if [[ $TEST -eq 1 ]]; then DIST_UPGRADE=false; else DIST_UPGRADE=true; fi
 
 	# build box image with packer
-	packer build -only=vmware-iso -force -var dist_upgrade=$DIST_UPGRADE -var salt_version="$3" "$1/$2".json 1>&3 2>&4
+	packer build -only=vmware-iso -force \
+		-var debug=$PACKER_DEBUG \
+		-var dist_upgrade=$DIST_UPGRADE \
+		-var salt_version="$3" \
+		"$1/$2".json 1>&3 2>&4
+
 	if [[ $? -gt 0 ]]; then
 		return 4
 	fi
