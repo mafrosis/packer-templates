@@ -49,15 +49,17 @@ echo "==> Removing obsolete networking components"
 apt-get -y purge ppp pppconfig pppoeconf
 echo "==> Removing other oddities"
 apt-get -y purge popularity-contest installation-report wireless-tools wpasupplicant
+echo "==> Removing groff info lintian linda"
+rm -rf /usr/share/groff/* /usr/share/info/* /usr/share/lintian/* /usr/share/linda/*
 
 echo "==> Removing man pages"
-rm -rf /usr/share/man/*
+find /usr/share/man -type f -delete
 echo "==> Removing APT files"
 find /var/lib/apt -type f -exec rm -f {} +
 echo "==> Removing anything in /usr/src, except linux headers"
 find /usr/src -mindepth 1 -maxdepth 1 -not -name 'linux-headers-*' -exec rm -rf {} +
 echo "==> Removing any docs"
-rm -rf /usr/share/doc/*
+find /usr/share/doc -type f -delete
 echo "==> Removing caches"
 find /var/cache -type f -exec rm -f {} +
 
