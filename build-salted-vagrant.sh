@@ -121,7 +121,7 @@ function build {
 	vagrant up
 	if [[ $? -gt 0 ]]; then
 		echo "${red}Failed bringing up the vagrant box!!${reset}" 1>&3 2>&4
-		cleanup "$2-packer"
+		cleanup "$2-packer" 1
 		return $?
 	fi
 
@@ -130,7 +130,7 @@ function build {
 	vagrant reload
 	if [[ $? -gt 0 ]]; then
 		echo "${red}Failed reloading the vagrant box!!${reset}" 1>&3 2>&4
-		cleanup "$2-packer"
+		cleanup "$2-packer" 1
 		return $?
 	fi
 
@@ -138,12 +138,12 @@ function build {
 	INSTALLED=$(vagrant ssh -c 'salt-call --version'  | awk -v version=${3:1} '$1 ~ $version')
 	if [[ -z $INSTALLED ]]; then
 		echo "${red}Failed verifying salt version $3 installed on target box!!${reset}" 1>&3 2>&4
-		cleanup "$2-packer"
+		cleanup "$2-packer" 1
 		return $?
 	fi
 
 	# remove the testing bits
-	cleanup "$2-packer"
+	cleanup "$2-packer" 0
 
 	echo "==> ${green}Verified Salt $3 installed on box/$2-packer${reset}" 1>&3 2>&4
 
@@ -181,6 +181,9 @@ function cleanup {
 	vagrant destroy -f
 	rm -f Vagrantfile
 	vagrant box remove "$1"
+	if [[ $2 -eq 1 ]]; then
+		rm -f box/"$1".box
+	fi
 
 	return 2
 }
