@@ -149,6 +149,7 @@ function build {
 
 	# exit now if using test mode (cleanup was aborted)
 	if [[ $TEST -eq 1 ]]; then
+		echo "==> Test mode enabled: box $1 left running in current directory" 1>&3 2>&4
 		return 3
 	fi
 
@@ -161,17 +162,18 @@ function build {
 
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		mv -f "box/$2-packer.box" "box/$2""64-au-salt-$3"".box"
-		echo "${white}==> Box moved to box/$2""64-au-salt-$3"".box\n${reset}" 1>&3 2>&4
+		echo "${white}==> Box moved to box/$2""64-au-salt-$3"".box${reset}" 1>&3 2>&4
 	else
-		echo "${white}==> Box left at box/$2-packer.box\n${reset}" 1>&3 2>&4
+		echo "${white}==> Box left at box/$2-packer.box${reset}" 1>&3 2>&4
 	fi
+
+	echo "==> ${green}Completed build for $2 with Salt $3${reset}" 1>&3 2>&4
 
 	return 0
 }
 
 function cleanup {
 	if [[ $TEST -eq 1 ]]; then
-		echo "==> Test mode enabled; box/"$1".box available for testing" 1>&3 2>&4
 		return 3
 	fi
 
