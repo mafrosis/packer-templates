@@ -67,6 +67,7 @@
 				],
 				"scripts": [
 					"script/debian.base.sh",
+					"script/systemd.sshd.sh",
 					"script/dist-upgrade.sh",
 					"script/vagrant.sh",
 					"script/vmtool.sh",
