@@ -153,21 +153,21 @@ function build {
 		return 3
 	fi
 
-	if [[ $FORCE -eq 0 ]] && [[ -f "box/$2""64-au-salt-$3"".box" ]]; then
-		read -p "A box exists at box/$2""64-au-salt-$3"".box. Overwrite it? [y/N] " -n1 -s 1>&3 2>&4
+	if [[ $FORCE -eq 0 ]] && [[ -f "box/${2}64-au-salt-${3}.box" ]]; then
+		read -p "A box exists at box/${2}64-au-salt-${3}.box. Overwrite it? [y/N] " -n1 -s 1>&3 2>&4
 		echo ''
 	else
 		REPLY=y
 	fi
 
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
-		mv -f "box/$2-packer.box" "box/$2""64-au-salt-$3"".box"
-		echo "${white}==> Box moved to box/$2""64-au-salt-$3"".box${reset}" 1>&3 2>&4
+		mv -f "box/$2-packer.box" "box/${2}64-au-salt-${3}.box"
+		echo "${white}==> Box moved to box/${2}64-au-salt-${3}.box${reset}" 1>&3 2>&4
 	else
 		echo "${white}==> Box left at box/$2-packer.box${reset}" 1>&3 2>&4
 	fi
 
-	echo "==> ${green}Completed build for $2 with Salt $3${reset}" 1>&3 2>&4
+	echo "==> ${green}Completed build for $2 with Salt ${3}${reset}" 1>&3 2>&4
 
 	return 0
 }
@@ -184,7 +184,7 @@ function cleanup {
 	rm -f Vagrantfile
 	vagrant box remove "$1"
 	if [[ $2 -eq 1 ]]; then
-		rm -f box/"$1".box
+		rm -f "box/${1}.box"
 	fi
 
 	return 2
