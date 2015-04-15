@@ -78,7 +78,11 @@ EOF
 }
 
 function build {
-	echo "Building Vagrant box for $2 at version $3" 1>&3 2>&4
+	local OS=$1			# ubuntu/debian
+	local FLAVOUR=$2	# wheezy/jessie/trusty
+	local VERSION=$3	# v2014.7.1
+
+	echo "Building Vagrant box for $FLAVOUR at version $VERSION" 1>&3 2>&4
 
 	# pass debug flag onto packer
 	if [[ $DEBUG -eq 1 ]]; then PACKER_DEBUG=true; else PACKER_DEBUG=false; fi
@@ -90,15 +94,15 @@ function build {
 	packer build -only=vmware-iso -force \
 		-var debug=$PACKER_DEBUG \
 		-var dist_upgrade=$DIST_UPGRADE \
-		-var salt_version="$3" \
-		"$1/$2".json 1>&3 2>&4
+		-var salt_version="$VERSION" \
+		"$OS/$FLAVOUR".json 1>&3 2>&4
 
 	if [[ $? -gt 0 ]]; then
 		return 4
 	fi
 
 	# create local Vagrantfile for testing
-	create_vagrantfile "$2-packer" $DEBUG
+	create_vagrantfile "$FLAVOUR-packer" $DEBUG
 
 	# stop and destroy an old test build
 	VSTATUS="$(vagrant status)"
@@ -109,7 +113,7 @@ function build {
 
 	# add the box for testing
 	echo "\n${white}==> Adding box to vagrant for testing${reset}" 1>&3 2>&4
-	vagrant box add -f "$2-packer" box/$2-packer.box
+	vagrant box add -f "$FLAVOUR-packer" box/$FLAVOUR-packer.box
 
 	# show Vagrant debugging output
 	if [[ $DEBUG -eq 1 ]]; then
@@ -121,7 +125,7 @@ function build {
 	vagrant up
 	if [[ $? -gt 0 ]]; then
 		echo "${red}Failed bringing up the vagrant box!!${reset}" 1>&3 2>&4
-		cleanup "$2-packer" 1
+		cleanup "$FLAVOUR-packer" 1
 		return $?
 	fi
 
@@ -130,44 +134,44 @@ function build {
 	vagrant reload
 	if [[ $? -gt 0 ]]; then
 		echo "${red}Failed reloading the vagrant box!!${reset}" 1>&3 2>&4
-		cleanup "$2-packer" 1
+		cleanup "$FLAVOUR-packer" 1
 		return $?
 	fi
 
 	# verify salt version
-	INSTALLED=$(vagrant ssh -c 'salt-call --version'  | awk -v version=${3:1} '$1 ~ $version')
+	INSTALLED=$(vagrant ssh -c 'salt-call --version' | awk -v version=${VERSION:1} '$1 ~ $version')
 	if [[ -z $INSTALLED ]]; then
-		echo "${red}Failed verifying salt version $3 installed on target box!!${reset}" 1>&3 2>&4
-		cleanup "$2-packer" 1
+		echo "${red}Failed verifying salt version $VERSION installed on target box!!${reset}" 1>&3 2>&4
+		cleanup "$FLAVOUR-packer" 1
 		return $?
 	fi
 
 	# remove the testing bits
-	cleanup "$2-packer" 0
+	cleanup "$FLAVOUR-packer" 0
 
-	echo "==> ${green}Verified Salt $3 installed on box/$2-packer${reset}" 1>&3 2>&4
+	echo "==> ${green}Verified Salt $VERSION installed on box/$FLAVOUR-packer${reset}" 1>&3 2>&4
 
 	# exit now if using test mode (cleanup was aborted)
 	if [[ $TEST -eq 1 ]]; then
-		echo "==> Test mode enabled: box $1 left running in current directory" 1>&3 2>&4
+		echo "==> Test mode enabled: box $OS left running in current directory" 1>&3 2>&4
 		return 3
 	fi
 
-	if [[ $FORCE -eq 0 ]] && [[ -f "box/${2}64-au-salt-${3}.box" ]]; then
-		read -p "A box exists at box/${2}64-au-salt-${3}.box. Overwrite it? [y/N] " -n1 -s 1>&3 2>&4
+	if [[ $FORCE -eq 0 ]] && [[ -f "box/${FLAVOUR}64-au-salt-${VERSION}.box" ]]; then
+		read -p "A box exists at box/${FLAVOUR}64-au-salt-${VERSION}.box. Overwrite it? [y/N] " -n1 -s 1>&3 2>&4
 		echo ''
 	else
 		REPLY=y
 	fi
 
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
-		mv -f "box/$2-packer.box" "box/${2}64-au-salt-${3}.box"
-		echo "${white}==> Box moved to box/${2}64-au-salt-${3}.box${reset}" 1>&3 2>&4
+		mv -f "box/$FLAVOUR-packer.box" "box/${FLAVOUR}64-au-salt-${VERSION}.box"
+		echo "${white}==> Box moved to box/${FLAVOUR}64-au-salt-${VERSION}.box${reset}" 1>&3 2>&4
 	else
-		echo "${white}==> Box left at box/$2-packer.box${reset}" 1>&3 2>&4
+		echo "${white}==> Box left at box/$FLAVOUR-packer.box${reset}" 1>&3 2>&4
 	fi
 
-	echo "==> ${green}Completed build for $2 with Salt ${3}${reset}" 1>&3 2>&4
+	echo "==> ${green}Completed build for $FLAVOUR with Salt ${VERSION}${reset}" 1>&3 2>&4
 
 	return 0
 }
