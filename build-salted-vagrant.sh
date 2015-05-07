@@ -88,15 +88,16 @@ function build {
 
 	echo "Building Vagrant box for $FLAVOUR at version $VERSION on $VM_TYPE" 1>&3 2>&4
 
-	# pass debug flag onto packer
-	if [[ $DEBUG -eq 1 ]]; then PACKER_DEBUG=true; else PACKER_DEBUG=false; fi
+	# pass debug flag onto packer; this is used to output debug info in build scripts
+	# initially only script/saltstack.sh uses it as debug for salt-bootstrap
+	if [[ $DEBUG -eq 1 ]]; then SALT_DEBUG=true; else SALT_DEBUG=false; fi
 
 	# don't run full dist-upgrade in test mode
 	if [[ $TEST -eq 1 ]]; then DIST_UPGRADE=false; else DIST_UPGRADE=true; fi
 
 	# build box image with packer
 	packer build -force -only=$VM_TYPE-iso \
-		-var debug=$PACKER_DEBUG \
+		-var debug=$SALT_DEBUG \
 		-var dist_upgrade=$DIST_UPGRADE \
 		-var salt_version="$VERSION" \
 		"$OS/$FLAVOUR".json 1>&3 2>&4
