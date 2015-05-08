@@ -17,10 +17,10 @@ DEBUG=0
 FORCE=0
 PLATFORM=vmware
 
-red='\033[0;91m'
-green='\033[0;92m'
-white='\033[0;97m'
-reset='\033[0m'
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+white=$(tput setaf 7)
+reset=$(tput sgr0)
 
 while getopts "v:tdhfp:" options
 do
@@ -33,15 +33,15 @@ do
 		h ) echo "$USAGE" && exit 1;;
 	esac
 done
-shift $(($OPTIND-1))
+shift $((OPTIND-1))
 
 if [[ $# -ne 1 ]]; then
-	echo "${red}You must choose either ubuntu or debian as the flavour${reset}\n  $USAGE"
+	printf "%sYou must choose either ubuntu or debian as the flavour%s\n\n  %s" "$red" "$reset" "$USAGE"
 	exit 1
 fi
 
 if [[ -z $VERSION ]]; then
-	echo "${red}Version number is required${reset}\n  $USAGE"
+	printf "%sVersion number is required%s\n\n  %s" "$red" "$reset" "$USAGE"
 	exit 1
 else
 	# ensure 'v' prefix
@@ -96,9 +96,9 @@ function build {
 	if [[ $TEST -eq 1 ]]; then DIST_UPGRADE=false; else DIST_UPGRADE=true; fi
 
 	# build box image with packer
-	packer build -force -only=$VM_TYPE-iso \
-		-var debug=$SALT_DEBUG \
-		-var dist_upgrade=$DIST_UPGRADE \
+	packer build -force -only="$VM_TYPE-iso" \
+		-var debug="$SALT_DEBUG" \
+		-var dist_upgrade="$DIST_UPGRADE" \
 		-var salt_version="$VERSION" \
 		"$OS/$FLAVOUR".json 1>&3 2>&4
 
@@ -111,13 +111,13 @@ function build {
 
 	# stop and destroy an old test build
 	VSTATUS="$(vagrant status)"
-	if [[ ! -z "$(echo $VSTATUS | grep 'default.*run')" ]] || [[ ! -z "$(echo $VSTATUS | grep 'default.*susp')" ]]; then
+	if echo "$VSTATUS" | grep -q 'default.*run' || echo "$VSTATUS" | grep -q 'default.*susp'; then
 		echo "${white}==> Destroying existing running VM${reset}"
 		vagrant destroy -f
 	fi
 
 	# add the box for testing
-	echo "\n${white}==> Adding box to vagrant for testing${reset}" 1>&3 2>&4
+	printf "\n%s==> Adding box to vagrant for testing%s\n" "${white}" "${reset}" 1>&3 2>&4
 	vagrant box add -f "$FLAVOUR-$VM_TYPE-packer" "box/$FLAVOUR-$VM_TYPE-packer.box"
 
 	# show Vagrant debugging output
@@ -134,7 +134,7 @@ function build {
 
 	# bring up testing box
 	echo "${white}==> Bringing up testing VM with Vagrant${reset}" 1>&3 2>&4
-	vagrant up --provider $PROVIDER_NAME
+	vagrant up --provider "$PROVIDER_NAME"
 	if [[ $? -gt 0 ]]; then
 		echo "${red}Failed bringing up the vagrant box!!${reset}" 1>&3 2>&4
 		cleanup "$FLAVOUR-$VM_TYPE-packer" 1
@@ -151,7 +151,7 @@ function build {
 	fi
 
 	# verify salt version
-	INSTALLED=$(vagrant ssh -c 'salt-call --version' | awk -v version=${VERSION:1} '$1 ~ $version')
+	INSTALLED=$(vagrant ssh -c 'salt-call --version' | awk -v version="${VERSION:1}" '$1 ~ $version')
 	if [[ -z $INSTALLED ]]; then
 		echo "${red}Failed verifying salt version $VERSION installed on target box!!${reset}" 1>&3 2>&4
 		cleanup "$FLAVOUR-$VM_TYPE-packer" 1
@@ -209,19 +209,20 @@ function cleanup {
 
 # main build dispatch
 if [[ $1 == 'ubuntu' ]]; then
-	build ubuntu trusty $VERSION $PLATFORM
+	build ubuntu trusty "$VERSION" "$PLATFORM"
 elif [[ $1 == 'trusty' ]]; then
-	build ubuntu trusty $VERSION $PLATFORM
+	build ubuntu trusty "$VERSION" "$PLATFORM"
 
 elif [[ $1 == 'debian' ]]; then
-	build debian wheezy $VERSION $PLATFORM
+	build debian wheezy "$VERSION" "$PLATFORM"
 elif [[ $1 == 'wheezy' ]]; then
-	build debian wheezy $VERSION $PLATFORM
+	build debian wheezy "$VERSION" "$PLATFORM"
 elif [[ $1 == 'jessie' ]]; then
-	build debian jessie $VERSION $PLATFORM
+	build debian jessie "$VERSION" "$PLATFORM"
 else
 	echo "Unsupported flavour: $1"
 	exit 1
 fi
 
+# exit withh return code from build()
 exit $?
