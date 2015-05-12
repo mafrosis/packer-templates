@@ -11,8 +11,8 @@ fi
 
 if [[ ${SALT_VERSION:-} == 'latest' ]]; then
   echo "==> Installing latest Salt version"
-  curl -L http://bootstrap.saltstack.org | sudo sh
+  curl -L https://raw.githubusercontent.com/mafrosis/salt-bootstrap/jessie-debug/bootstrap-salt.sh | sudo sh
 else
   echo "==> Installing Salt version ${SALT_VERSION}"
-  curl -L http://bootstrap.saltstack.org | sudo sh -s -- ${BOOTSTRAP_OPTIONS} git ${SALT_VERSION}
+  curl -L https://raw.githubusercontent.com/mafrosis/salt-bootstrap/jessie-debug/bootstrap-salt.sh | sudo sh -s -- ${BOOTSTRAP_OPTIONS} git ${SALT_VERSION}
 fi
