@@ -2,7 +2,8 @@
 
 USAGE="build-salted-vagrant.sh [-h] [-t] [-d] [-f] [-p platform] -v <version> <flavour>
 
-  flavour           release codename {'wheezy','trusty','debian','ubuntu'} ('debian' will default to latest release)
+  flavour           release codename {'jessie','wheezy','trusty','debian','ubuntu'}
+                    ubuntu/debian will default to latest release
   -v version        salt version tag to install
   -p (optional)     platform: either virtualbox or vmware
   -t (optional)     test mode (don't dist_upgrade; leave box available for test)
@@ -214,7 +215,7 @@ elif [[ $1 == 'trusty' ]]; then
 	build ubuntu trusty "$VERSION" "$PLATFORM"
 
 elif [[ $1 == 'debian' ]]; then
-	build debian wheezy "$VERSION" "$PLATFORM"
+	build debian jessie "$VERSION" "$PLATFORM"
 elif [[ $1 == 'wheezy' ]]; then
 	build debian wheezy "$VERSION" "$PLATFORM"
 elif [[ $1 == 'jessie' ]]; then
