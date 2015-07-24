@@ -9,7 +9,7 @@ if [[ $PACKER_BUILDER_TYPE =~ vmware ]]; then
 	cd /tmp
 	git clone https://github.com/rasa/vmware-tools-patches.git
 	cd vmware-tools-patches
-	./download-tools.sh 7.1.1
+	./download-tools.sh 7.1.2
 	./untar-and-patch-and-compile.sh
 fi
 
