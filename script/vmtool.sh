@@ -5,7 +5,12 @@ if [[ $PACKER_BUILDER_TYPE =~ vmware ]]; then
 	# Assuming the following packages are installed
 	# apt-get install -y linux-headers-$(uname -r) build-essential perl
 
-	apt-get install -y git unzip
+	if [[ -f /etc/centos-release ]]; then
+		yum -y install git unzip wget patch net-tools
+	else
+		apt-get install -y git zip
+	fi
+
 	cd /tmp
 	git clone https://github.com/rasa/vmware-tools-patches.git
 	cd vmware-tools-patches

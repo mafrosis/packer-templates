@@ -6,7 +6,11 @@ if [[ $DEBUG =~ true ]]; then
 fi
 
 if [[ -z $(which curl) ]]; then
-	sudo apt-get install -y curl
+	if [[ -f /etc/centos-release ]]; then
+		yum install -y curl
+	else
+		apt-get install -y curl
+	fi
 fi
 
 if [[ ${SALT_VERSION:-} == 'latest' ]]; then
