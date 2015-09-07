@@ -65,8 +65,10 @@ fi
 
 
 function create_vagrantfile {
+	BOOTSTRAP_OPTIONS='-F -c /tmp'
+
 	if [[ $2 -eq 1 ]]; then
-		BOOTSTRAP_OPTIONS='-D -K'
+		BOOTSTRAP_OPTIONS="-D -K $BOOTSTRAP_OPTIONS"
 	fi
 
 	tee Vagrantfile > /dev/null <<EOF
