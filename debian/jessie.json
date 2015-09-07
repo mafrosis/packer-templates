@@ -28,8 +28,8 @@
 			"install",
 			" auto",
 			" url=http://{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg",
-			" debian-installer=en_AU",
-			" locale=en_AU",
+			" debian-installer=en_GB",
+			" locale=en_GB",
 			" keymap=gb",
 			" netcfg/get_hostname=vagrant",
 			" netcfg/get_domain=vm ",
@@ -67,7 +67,6 @@
 	}],
 	"post-processors": [{
 		"type": "vagrant",
-		"only": ["vmware-iso"],
 		"keep_input_artifact": false,
 		"output": "box/{{user `app_name`}}-vmware-packer.box"
 	}]
