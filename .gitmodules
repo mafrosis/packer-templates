@@ -4,3 +4,6 @@
 [submodule "windows"]
 	path = windows
 	url = git@github.com:mafrosis/packer-windows.git
+[submodule "debian"]
+	path = debian
+	url = git@github.com:mafrosis/boxcutter-debian.git
