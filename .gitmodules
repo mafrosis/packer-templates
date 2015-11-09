@@ -7,3 +7,6 @@
 [submodule "debian"]
 	path = debian
 	url = git@github.com:mafrosis/boxcutter-debian.git
+[submodule "ubuntu"]
+	path = ubuntu
+	url = git@github.com:mafrosis/boxcutter-ubuntu.git
